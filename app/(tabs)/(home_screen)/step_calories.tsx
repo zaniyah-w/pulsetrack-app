@@ -1,11 +1,7 @@
-import React from "react";
-import getCaloriesForDay from "./index";
+import React, {useState} from "react";
+import {View, StyleSheet} from "react-native";
+
 import getStepsForday from "./index";
-
-export default function step_calories(){
-
-    
+import MapView, {Marker, Polyline, MapPressEvent} from "react-native-maps";
 
 
-
-}
