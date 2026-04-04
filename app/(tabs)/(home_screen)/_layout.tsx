@@ -1,7 +1,6 @@
-import { Stack, Router } from 'expo-router';
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { Stack } from 'expo-router';
 import React from "react";
-import { Ionicons } from "@expo/vector-icons";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 export default function _layout(){
 return (
@@ -9,7 +8,7 @@ return (
   <SafeAreaProvider>
     <Stack screenOptions={{headerShown: false}}>
 
-        <Stack.Screen name = "steps" options={{title: "Steps"}} /> 
+        <Stack.Screen name = "steps" options={{title: "Steps", presentation: 'modal'}} /> 
 
         <Stack.Screen name = "calories" options={{title: "Calories"}} /> 
   

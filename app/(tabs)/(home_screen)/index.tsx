@@ -1,4 +1,4 @@
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import * as Progress from "react-native-progress";
@@ -18,6 +18,7 @@ function getCaloriesForDay() {
 export default function Index() {
 
 
+    const router = useRouter();
 
     const numOfSteps = getnumOfStepsForday();
     const cals = getCaloriesForDay();
