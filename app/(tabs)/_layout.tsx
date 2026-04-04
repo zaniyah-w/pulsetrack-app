@@ -12,7 +12,7 @@ export default function TabLayout() {
       }}>
 
       <Tabs.Screen
-        name="index"
+        name="(home_screen)"
         options={{
           title: 'Home',
           tabBarIcon: ({ color, focused }) => <Ionicons name={focused ? 'home': 'home-outline'} size={24} color={color} />
@@ -22,14 +22,14 @@ export default function TabLayout() {
         name="(profile)"
         options={{
           title: 'Profile',
-          tabBarIcon: ({ color, focused }) => <Ionicons name={focused ? 'person': 'person'} size={24} color={color} />
+          tabBarIcon: ({ color, focused }) => <Ionicons name={focused ? 'person': 'person-outline'} size={24} color={color} />
         }}/>
 
       <Tabs.Screen
         name="(workout_log)"
         options={{
-          title: 'Workout Log',
-          tabBarIcon: ({ color, focused }) => <Ionicons name={focused ? 'journal': 'journal'} size={24} color={color} />
+          title: 'Workouts',
+          tabBarIcon: ({ color, focused }) => <Ionicons name={focused ? 'journal': 'journal-outline'} size={24} color={color} />
         }}/>
         
     </Tabs>
