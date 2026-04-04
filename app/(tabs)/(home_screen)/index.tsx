@@ -1,10 +1,9 @@
-import { Text, View, StyleSheet, TouchableOpacity} from "react-native";
-import * as Progress from "react-native-progress";
-import { useRouter } from "expo-router"; 
+import { Link, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import step_calories from "./step_calories";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import * as Progress from "react-native-progress";
 
-function getStepsForday(){
+function getnumOfStepsForday(){
     const minSteps = 100;
     const maxSteps = 18000
     return Math.floor(Math.random() *(maxSteps - minSteps + 1)) + minSteps;
@@ -21,14 +20,14 @@ export default function Index() {
 
     const router = useRouter();
 
-    const steps = getStepsForday();
+    const numOfSteps = getnumOfStepsForday();
     const cals = getCaloriesForDay();
     const goal = 18000;  
     const maxCals = 3000;
 
-    const[activateCard, setActivateCard] = useState<"steps"|"calories"|null>(null);
+    const[activateCard, setActivateCard] = useState<"numOfSteps"|"calories"|null>(null);
 
-    const handlePress = (type: "steps" | "calories") => {setActivateCard(type);
+    const handlePress = (type: "numOfSteps" | "calories") => {setActivateCard(type);
     };
     
     const [progress_display, setProgress] = useState(0);
@@ -38,7 +37,7 @@ export default function Index() {
     useEffect(() => {
 
         const steptimeOut = setTimeout(() => {
-            setProgress(steps/goal);
+            setProgress(numOfSteps/goal);
         }, 300);
 
         let start = 0;
@@ -64,18 +63,20 @@ export default function Index() {
     },[]);
 
   return (
+    // Should be <Link href={"/steps/${numOfSteps}`"} asChild> but dynamic rendering is not working for some reason
     <View style= {styles.container}>
-
+        <Link href={"/steps"} asChild>
         <TouchableOpacity style={styles.card}
-        onPress={() => handlePress("steps")}>
+        onPress={() => handlePress("numOfSteps")}>
             
+        
         <Progress.Circle
         size = {200}
         progress={progress_display}
         thickness={10}
         color="#270787"
         showsText = {true}
-        formatText={() => `${steps}/${goal}`}
+        formatText={() => `${numOfSteps}/${goal}`}
         animated = {true} 
         direction="clockwise"
         borderWidth={3}
@@ -85,6 +86,7 @@ export default function Index() {
 
         <Text style = {styles.label}>Steps For the Day </Text>
     </TouchableOpacity>
+    </Link>
 
     <TouchableOpacity style={styles.card} onPress={() => handlePress("calories")}>
 
