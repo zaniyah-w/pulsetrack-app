@@ -1,8 +1,9 @@
+import { useLocalSearchParams } from "expo-router";
 import React from "react";
 import { FlatList, StyleSheet, View } from "react-native";
 
-// const {numOfSteps} = useLocalSearchParams(); Dynamic rendering not working for some reason
-const numOfSteps = Math.floor(10000/7); // Placeholder value for testing purposes, replace with dynamic value when possible
+const {numOfSteps} = useLocalSearchParams(); 
+// const numOfSteps = Math.floor(10000/7); // Placeholder value for testing purposes, replace with dynamic value when possible
 const numofMiles = Number(numOfSteps) * 0.000473484848;
 
 const DATA = [
@@ -16,7 +17,7 @@ const DATA = [
 
 
 
-export const step_calories = () => {
+export const steps = () => {
   return (
     <View>
         <FlatList
@@ -35,7 +36,7 @@ export const step_calories = () => {
     </View>
 )}
 
-export default step_calories
+export default steps;
 
 const styles = StyleSheet.create({})
 
