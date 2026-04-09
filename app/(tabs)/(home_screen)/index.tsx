@@ -65,7 +65,7 @@ export default function Index() {
   return (
     // Should be <Link href={"/steps/${numOfSteps}`"} asChild> but dynamic rendering is not working for some reason
     <View style= {styles.container}>
-        <Link href={"./steps/${numOfSteps}"} asChild>
+        <Link href={"./steps"} asChild>
         <TouchableOpacity style={styles.card}
         onPress={() => handlePress("numOfSteps")}>
             

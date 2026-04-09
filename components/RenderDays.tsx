@@ -35,9 +35,9 @@ const RenderDays = ({ day }: { day: Day }) => {
     <View style={{ flexDirection: "row", padding: 10 }}>
 
       <View style={{ flex: 1, marginLeft: 10 }}>
-        <Text>{day.date}</Text>
-        <Text>{day.totalSteps}</Text>
-        <Text>{day.totalCals}</Text>
+        <Text>{day.date.toString()}  </Text>
+        <Text>{day.totalSteps.toString()}</Text>
+        <Text>{day.totalCals.toString()}</Text>
       </View>
 
     </View>
