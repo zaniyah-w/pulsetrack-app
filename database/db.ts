@@ -25,7 +25,7 @@ export const initDatabase = async () => {
             
             CREATE TABLE IF NOT EXISTS days (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                date TEXT,
+                date TEXT UNIQUE,
                 entryData TEXT,
                 totalSteps REAL,
                 totalCals REAL,
@@ -43,7 +43,7 @@ export const addDayToDb = async (date: string, entryData: string, totalSteps: nu
     // Create a new day if it doesn't exist yet
     try {
         await db.runAsync(
-            `INSERT INTO days (date, entryData, totalSteps, totalCals)
+            `INSERT OR IGNORE INTO days (date, entryData, totalSteps, totalCals)
             VALUES (?, ?, ?, ?)`,
             [date, entryData, totalSteps, totalCals]
         );

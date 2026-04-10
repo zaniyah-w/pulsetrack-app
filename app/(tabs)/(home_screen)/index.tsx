@@ -20,7 +20,6 @@ export default function Index() {
 
 
     const router = useRouter();
-    initDatabase();
 
     const numOfSteps = getnumOfStepsForday();
     const cals = getCaloriesForDay();
@@ -69,7 +68,6 @@ export default function Index() {
     },[]);
 
   return (
-    // Should be <Link href={"/steps/${numOfSteps}`"} asChild> but dynamic rendering is not working for some reason
     <View style= {styles.container}>
         <Link href={"./steps"} asChild>
         <TouchableOpacity style={styles.card}
