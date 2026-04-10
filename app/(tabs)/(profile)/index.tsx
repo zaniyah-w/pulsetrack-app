@@ -1,5 +1,5 @@
 import RenderDays, { getTodayDate } from "@/components/RenderDays";
-import { getTodayFromDb } from "@/database/db";
+import { addDayToDb, getTodayFromDb } from "@/database/db";
 import { Day } from "@/interfaces/interface";
 import { useFocusEffect, useRouter } from "expo-router";
 import React, { useState } from "react";
@@ -9,7 +9,6 @@ import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native
 function handlePress() {
   return null;
 }
-
 
 export default function ProfileScreen() {
   const router = useRouter();
@@ -25,13 +24,19 @@ export default function ProfileScreen() {
       setDays(todayData);
     }
     loadDays()
+
+    if (!days[0]) { // Meaning today's day in database is completely blank, we need to create it
+      addDayToDb(formattedDate, "", 0, 0);
+      loadDays()
+    }
   })
 
+  // params: {todayID: days[0].date}
   return ( // Need this to show "nothing logged" if the day is empty, not working right now
     <View style = {{flex: 1, justifyContent: "center", alignItems: "center"}}>
 
       <View style = {{flex: 3, justifyContent: "center", alignItems: "center"}}> 
-        {days[0] === null ? (
+        {!days[0] ? (
         <Text>Nothing Logged Today.</Text>
       ) : (
           <FlatList
@@ -48,7 +53,7 @@ export default function ProfileScreen() {
             <Text style={styles.label}>New Workout Entry</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.card}
-        onPress={() => router.push({pathname:'./newMealEntry', params: {todayID: days[0].id}})}>
+        onPress={() => router.push({pathname:'./newMealEntry', params: {todayID: days[0].date}})}>
             <Text style={styles.label}>New Meal Entry</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.card}

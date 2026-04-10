@@ -8,6 +8,9 @@ import { Text, View } from 'react-native';
 // | -> Seperates information in each workout/meal
 
 // Convert entryData string into an array of Entry objects
+
+const [entryType, setEntryType] = useState<string | null>(null); // T = Workout, F = Meal
+
 function parseDataString(fullData: string) { // will take in a entryData string from each Day
     const dataStrings = fullData.split('~'); // data should look like: ["...|...|...|...", "...|...|...|...", "...|...|...|..."]
     const entryArray: Entry [] = [];
@@ -48,12 +51,15 @@ export function getTodayDate() {
 
 const RenderDays = ({ day }: { day: Day }) => {
 
-    const [entryType, setEntryType] = useState<string | null>(null); // T = Workout, F = Meal
+
 
   return (
     
     <View style={{ flexDirection: "row", padding: 10 }}>
-      <Text>Flatlist Test</Text>
+      <Text>Date: {day.date}</Text>
+      <Text>Total Steps: {day.totalSteps}</Text>
+      <Text>Total Calories: {day.totalCals}</Text>
+      
 
     </View>
 )}

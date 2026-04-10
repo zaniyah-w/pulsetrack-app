@@ -3,8 +3,8 @@ export interface Day {
   id: number;
   date: string;
   entryData: string;
-  totalSteps: string;
-  totalCals: string;
+  totalSteps: number;
+  totalCals: number;
 };
 
 export interface Entry {
