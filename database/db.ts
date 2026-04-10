@@ -70,12 +70,13 @@ export const getDaysFromDb = async (): Promise<Day []> => {
 export const getTodayFromDb = async (date: string): Promise<Day []> => {
     try {
         // get results from db
-        const result = await db.getAllAsync<Day>(
+        const result: Day [] = await db.getAllAsync<Day>(
             `SELECT * FROM days WHERE date = ?`, [date]);
         return result
     } catch (e) {
         console.log("getTodayFromDb: ", e)
-        return []
+        const result: Day [] = []
+        return result
     }
 }
 

@@ -1,32 +1,85 @@
-import RenderDays from "@/components/RenderDays";
-import { getDaysFromDb } from "@/database/db";
+import RenderDays, { getTodayDate } from "@/components/RenderDays";
+import { getTodayFromDb } from "@/database/db";
 import { Day } from "@/interfaces/interface";
-import { useFocusEffect } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import React, { useState } from "react";
-import { FlatList, View } from "react-native";
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
+
+function handlePress() {
+  return null;
+}
 
 
 export default function ProfileScreen() {
+  const router = useRouter();
 
   const [days, setDays] = useState<Day [] | []>([]);
 
   // run every time screen is visbile
   useFocusEffect(() => {
+    const formattedDate = getTodayDate();
+
     const loadDays = async () => {
-      const newDays = await getDaysFromDb()
-      setDays(newDays)
+      const todayData = await getTodayFromDb(formattedDate);
+      setDays(todayData);
     }
     loadDays()
   })
 
-  return (
-    <View style={{ flex: 7, justifyContent: "center", alignItems: "center" }}>
-      <FlatList
-        data={days}
-        keyExtractor={(day) => day.id.toString()}
-        renderItem={({item}) => (<RenderDays day={item}/>)}
-    />
+  return ( // Need this to show "nothing logged" if the day is empty, not working right now
+    <View style = {{flex: 1, justifyContent: "center", alignItems: "center"}}>
+
+      <View style = {{flex: 3, justifyContent: "center", alignItems: "center"}}> 
+        {days[0] === null ? (
+        <Text>Nothing Logged Today.</Text>
+      ) : (
+          <FlatList
+          data={days}
+          keyExtractor={item => item.id.toString()}
+          renderItem={({ item }) => <RenderDays day={item} />}
+        />
+        )}
+      </View>
+
+      <View style={{flex: 1, justifyContent: "center", alignItems: "center"}}>
+        <TouchableOpacity style={styles.card}
+        onPress={() => router.push('./newWorkoutEntry')}>
+            <Text style={styles.label}>New Workout Entry</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.card}
+        onPress={() => router.push({pathname:'./newMealEntry', params: {todayID: days[0].id}})}>
+            <Text style={styles.label}>New Meal Entry</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.card}
+        onPress={() => router.push('./full_log')}>
+          <Text style={styles.label}>View Full Log</Text>
+        </TouchableOpacity>
+      </View>
     </View>
+    
   );
 }
+
+const styles = StyleSheet.create({
+    container:{
+        alignItems: "center",
+        justifyContent: "center",
+        marginTop: 100,
+    },
+
+    label: {
+        fontSize: 24,
+        color: "black",
+        fontWeight: "bold",
+        marginTop: 20,
+        marginBottom: 80,
+    },
+
+    card:{
+        fontSize: 18,
+        color: "black",
+        fontWeight: "medium",
+        alignItems: "center"
+    }
+});

@@ -27,18 +27,33 @@ function parseDataString(fullData: string) { // will take in a entryData string 
 });
 }
 
+export function createDataString(entry: Entry) {
+  const type = entry.type.toString();
+  const time = entry.time.toString();
+  const value = entry.value.toString();
+  const description = entry.description;
+
+  return type + "|" + time + "|" + value + "|" + description;
+}
+
+export function getTodayDate() {
+      const todayDate = new Date();
+    const day = todayDate.getDate();
+    const month = todayDate.getMonth() + 1; 
+    const year = todayDate.getFullYear();
+    const formattedDate = `${day}/${month}/${year}`; // Collect today's date to load profile
+
+    return formattedDate;
+}
+
 const RenderDays = ({ day }: { day: Day }) => {
 
     const [entryType, setEntryType] = useState<string | null>(null); // T = Workout, F = Meal
 
   return (
+    
     <View style={{ flexDirection: "row", padding: 10 }}>
-
-      <View style={{ flex: 1, marginLeft: 10 }}>
-        <Text>{day.date.toString()}  </Text>
-        <Text>{day.totalSteps.toString()}</Text>
-        <Text>{day.totalCals.toString()}</Text>
-      </View>
+      <Text>Flatlist Test</Text>
 
     </View>
 )}
