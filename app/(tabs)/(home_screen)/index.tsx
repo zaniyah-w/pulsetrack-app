@@ -1,3 +1,4 @@
+import { initDatabase } from "@/database/db";
 import { Link, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -19,6 +20,7 @@ export default function Index() {
 
 
     const router = useRouter();
+    initDatabase();
 
     const numOfSteps = getnumOfStepsForday();
     const cals = getCaloriesForDay();
@@ -34,7 +36,10 @@ export default function Index() {
 
     const [cals_display, setCals_display] = useState(0);
 
-    useEffect(() => {
+    useEffect(() => { // Inital setup on first load
+
+        initDatabase(); // Run database for the first time, creating it if it doesnt exist
+
 
         const steptimeOut = setTimeout(() => {
             setProgress(numOfSteps/goal);
@@ -65,7 +70,7 @@ export default function Index() {
   return (
     // Should be <Link href={"/steps/${numOfSteps}`"} asChild> but dynamic rendering is not working for some reason
     <View style= {styles.container}>
-        <Link href={"/steps"} asChild>
+        <Link href={"./steps{formattedDate}"} asChild>
         <TouchableOpacity style={styles.card}
         onPress={() => handlePress("numOfSteps")}>
             

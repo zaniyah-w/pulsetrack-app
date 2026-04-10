@@ -1,7 +1,7 @@
 import React from "react";
-import { FlatList, StyleSheet, View } from "react-native";
+import { FlatList, StyleSheet, Text, View } from "react-native";
 
-// const {numOfSteps} = useLocalSearchParams(); Dynamic rendering not working for some reason
+
 const numOfSteps = Math.floor(10000/7); // Placeholder value for testing purposes, replace with dynamic value when possible
 const numofMiles = Number(numOfSteps) * 0.000473484848;
 
@@ -16,7 +16,7 @@ const DATA = [
 
 
 
-export const step_calories = () => {
+export const steps = () => {
   return (
     <View>
         <FlatList
@@ -24,10 +24,10 @@ export const step_calories = () => {
             keyExtractor={item => item.id}
             renderItem={({ item }) => (
                 <View style={{ padding: 20 }}>
-                    <text>{item.dayOfWeek}</text>
-                    <text> Today, you walked {numOfSteps} steps!</text>
-                    <text> That is equal to {numofMiles.toFixed(2)} miles.</text>
-                    <text> To get to your maximum step goal, here are some suggestions:</text>
+                    <Text>{item.dayOfWeek.toString()}</Text>
+                    <Text> Today, you walked {numOfSteps.toString()} steps!</Text>
+                    <Text> That is equal to {numofMiles.toFixed(2).toString()} miles.</Text>
+                    <Text> To get to your maximum step goal, here are some suggestions:</Text>
 
                 </View>
             )}
@@ -35,7 +35,7 @@ export const step_calories = () => {
     </View>
 )}
 
-export default step_calories
+export default steps;
 
 const styles = StyleSheet.create({})
 

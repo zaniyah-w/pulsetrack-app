@@ -1,14 +1,14 @@
 import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
-const explore = () => {
+const newWorkoutEntry = () => {
   return (
-    <View style={{ flex: 1, backgroundColor: "grey" }}> 
-      <Text>explore</Text>
+    <View>
+      <Text>newWorkoutEntry</Text>
     </View>
   )
 }
 
-export default explore
+export default newWorkoutEntry
 
 const styles = StyleSheet.create({})
