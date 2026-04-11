@@ -20,7 +20,6 @@ export default function Index() {
 
 
     const router = useRouter();
-    initDatabase();
 
     const numOfSteps = getnumOfStepsForday();
     const cals = getCaloriesForDay();
@@ -39,6 +38,7 @@ export default function Index() {
     useEffect(() => { // Inital setup on first load
 
         initDatabase(); // Run database for the first time, creating it if it doesnt exist
+        
 
 
         const steptimeOut = setTimeout(() => {
@@ -68,9 +68,8 @@ export default function Index() {
     },[]);
 
   return (
-    // Should be <Link href={"/steps/${numOfSteps}`"} asChild> but dynamic rendering is not working for some reason
     <View style= {styles.container}>
-        <Link href={"./steps{formattedDate}"} asChild>
+        <Link href={"./steps"} asChild>
         <TouchableOpacity style={styles.card}
         onPress={() => handlePress("numOfSteps")}>
             

@@ -1,5 +1,5 @@
 import { Day, Entry } from '@/interfaces/interface';
-import React, { useState } from 'react';
+import React from 'react';
 import { Text, View } from 'react-native';
 
 // "Day"s are already seperated by the database
@@ -8,6 +8,8 @@ import { Text, View } from 'react-native';
 // | -> Seperates information in each workout/meal
 
 // Convert entryData string into an array of Entry objects
+
+
 function parseDataString(fullData: string) { // will take in a entryData string from each Day
     const dataStrings = fullData.split('~'); // data should look like: ["...|...|...|...", "...|...|...|...", "...|...|...|..."]
     const entryArray: Entry [] = [];
@@ -41,19 +43,34 @@ export function getTodayDate() {
     const day = todayDate.getDate();
     const month = todayDate.getMonth() + 1; 
     const year = todayDate.getFullYear();
-    const formattedDate = `${day}/${month}/${year}`; // Collect today's date to load profile
-
-    return formattedDate;
+    if (day < 10) {
+      return `${month}|0${day}|${year}` // add leading 0 to day for formatting
+    } else {
+      return `${month}|${day}|${year}`
+    }
 }
 
 const RenderDays = ({ day }: { day: Day }) => {
 
-    const [entryType, setEntryType] = useState<string | null>(null); // T = Workout, F = Meal
+
 
   return (
+
     
     <View style={{ flexDirection: "row", padding: 10 }}>
-      <Text>Flatlist Test</Text>
+
+      {!day.entryData ? (
+        <View>
+        <Text>Nothing Logged Today</Text>
+        </View>
+      ) : (
+        <View>
+          <Text>Date: {day.date}</Text>
+          <Text>Total Steps: {day.totalSteps}</Text>
+          <Text>Total Calories: {day.totalCals}</Text>
+        </View>
+      )}
+      
 
     </View>
 )}

@@ -24,11 +24,11 @@ export const initDatabase = async () => {
             PRAGMA journal_mode = WAL;
             
             CREATE TABLE IF NOT EXISTS days (
-                id INTEGER PRIMARY KEY,
-                date TEXT,
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                date TEXT UNIQUE,
                 entryData TEXT,
-                totalSteps TEXT,
-                totalCals TEXT,
+                totalSteps REAL,
+                totalCals REAL,
                 created_at TEXT DEFAULT CURRENT_TIMESTAMP
             );
         `);
@@ -37,14 +37,15 @@ export const initDatabase = async () => {
   }
 };
 
+
 // Create and export function that adds a day to the days table
-export const addDayToDb = async (day: Day) => {
-    // try to add char to favorites
+export const addDayToDb = async (date: string, entryData: string, totalSteps: number, totalCals: number) => {
+    // Create a new day if it doesn't exist yet
     try {
         await db.runAsync(
-            `INSERT INTO days (id, date, entryData, totalSteps, totalCals)
-            VALUES (?, ?, ?, ?, ?)`,
-            [day.id, day.date, day.entryData, day.totalSteps, day.totalCals]
+            `INSERT OR IGNORE INTO days (date, entryData, totalSteps, totalCals)
+            VALUES (?, ?, ?, ?)`,
+            [date, entryData, totalSteps, totalCals]
         );
     } catch (e) {
         console.log("addDayToDb: ", e)
@@ -66,7 +67,7 @@ export const getDaysFromDb = async (): Promise<Day []> => {
     }
 }
 
-// Only returns information from current date
+// Only returns information from given date
 export const getTodayFromDb = async (date: string): Promise<Day []> => {
     try {
         // get results from db
@@ -93,7 +94,7 @@ export const deleteDayFromDb = async (id: number) => {
 }
 
 // Update entryData from database
-export const updateDayEntryData = async (id: number, entryData: string) => {
+export const updateDayEntryData = async (entryData: string, id: string) => {
 
     try {
         await db.runAsync(`UPDATE days SET entryData = ? WHERE id = ?`, [entryData, id]);

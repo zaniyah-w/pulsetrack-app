@@ -1,7 +1,7 @@
-import { getTodayDate } from '@/components/RenderDays';
-import { getTodayFromDb } from '@/database/db';
-import { Entry } from '@/interfaces/interface';
-import { router, useLocalSearchParams } from 'expo-router';
+import { createDataString, getTodayDate } from '@/components/RenderDays';
+import { getTodayFromDb, updateDayEntryData } from '@/database/db';
+import { Day, Entry } from '@/interfaces/interface';
+import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -9,55 +9,66 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 // Form to add a new entry to the database
 // Make this look pretty later
 
-const [textTime, setTextTime] = useState('Useless Text');
-const [textCalories, setTextCalories] = useState('Useless Text');
-const [textDescription, setTextDescription] = useState('Useless Text');
 
 
 
-async function submitMealEntry() {
+
+
+ 
+
+
+async function submitMealEntry(time: string, value: string, description: string, oldDay: Day) {
   const newMealEntry: Entry = {
     type: "m",
-    time: textTime,
-    value: textCalories,
-    description: textDescription
+    time: time,
+    value: value,
+    description: description
   }
 
-  try {
-    const oldEntryData  = await getTodayFromDb(getTodayDate())[0];
-  } catch (e) {
-    return null
-  }
+  const newEntryData = oldDay.entryData + createDataString(newMealEntry);
+  updateDayEntryData(newEntryData, oldDay.id.toString());
+  
 
 
-  router.push("/index")
+  router.back();
 }
 
 export const newEntry = () => {
 
-  const {todayID} = useLocalSearchParams();
+  const [textTime, setTextTime] = useState('Useless Text');
+  const [textCalories, setTextCalories] = useState('Useless Text');
+  const [textDescription, setTextDescription] = useState('Useless Text');
+  const [oldDay, setOldDay] = useState<Day [] | []>([]);
+
+  const todayDate = getTodayDate();
+
+  const loadData = async (date: string) => {
+    const data = await (getTodayFromDb(date))
+    setOldDay(data)
+  }
+  loadData(todayDate[0]);
     
   return (
     <SafeAreaProvider>
       <View>
         <TextInput
           onChangeText={setTextTime}
-          value={"Enter the time of the meal."}
+          value={textTime}
         />
         <TextInput
           onChangeText={setTextCalories}
-          value={"Enter toal calories."}
+          value={textCalories}
         />
         <TextInput
           onChangeText={setTextDescription}
-          value={"Enter a description of your meal."}
+          value={textDescription}
           multiline={true}
         />
       </View>
       <View>
         <TouchableOpacity
-          onPress={() => submitMealEntry()}>
-          <Text>New Workout Entry</Text>
+          onPress={() => submitMealEntry(textTime, textDescription, textCalories, oldDay[0])}>
+          <Text>Submit</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaProvider>
