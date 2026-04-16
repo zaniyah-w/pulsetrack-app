@@ -1,13 +1,15 @@
-import { createDataString, getTodayDate } from '@/components/RenderDays';
-import { getTodayFromDb, updateDayEntryData } from '@/database/db';
+import { createDataString } from '@/components/RenderDays';
+import { getTodayFromDb, updateDayEntryData, updateDayTotalCals } from '@/database/db';
 import { Day, Entry } from '@/interfaces/interface';
-import { router } from 'expo-router';
-import React, { useState } from 'react';
+import { router, useLocalSearchParams } from 'expo-router';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 // Form to add a new entry to the database
-// Make this look pretty later
+// TODO:
+// 1. Make this look pretty
+// 2. Input Validation for text entries
 
 
 
@@ -25,13 +27,20 @@ async function submitMealEntry(time: string, value: string, description: string,
     description: description
   }
 
+  console.log("value raw:", JSON.stringify(value));
+  console.log("value as number:", Number(value));
+
+  const oldCals = Number(oldDay.totalCals)
+  const newCals = oldCals + Number(value);
   const newEntryData = oldDay.entryData + createDataString(newMealEntry);
-  updateDayEntryData(newEntryData, oldDay.id.toString());
+  await updateDayEntryData(newEntryData, oldDay.id.toString());
+  await updateDayTotalCals(newCals, oldDay.id.toString())
   
 
 
   router.back();
 }
+
 
 export const newEntry = () => {
 
@@ -40,13 +49,16 @@ export const newEntry = () => {
   const [textDescription, setTextDescription] = useState('Useless Text');
   const [oldDay, setOldDay] = useState<Day [] | []>([]);
 
-  const todayDate = getTodayDate();
-
+  const { todayID } = useLocalSearchParams<{ todayID: string }>();
   const loadData = async (date: string) => {
     const data = await (getTodayFromDb(date))
     setOldDay(data)
   }
-  loadData(todayDate[0]);
+
+  useEffect(() => {
+    if (!todayID) return;
+    loadData(todayID);
+  }, [todayID]);
     
   return (
     <SafeAreaProvider>
@@ -67,7 +79,10 @@ export const newEntry = () => {
       </View>
       <View>
         <TouchableOpacity
-          onPress={() => submitMealEntry(textTime, textDescription, textCalories, oldDay[0])}>
+          onPress={() => {
+            if (!oldDay[0]) return;
+            submitMealEntry(textTime, textCalories, textDescription, oldDay[0]);
+          }}>
           <Text>Submit</Text>
         </TouchableOpacity>
       </View>

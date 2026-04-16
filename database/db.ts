@@ -103,7 +103,7 @@ export const updateDayEntryData = async (entryData: string, id: string) => {
     }
 }
 
-export const updateDayTotalSteps = async (id: number, totalSteps: string) => {
+export const updateDayTotalSteps = async (totalSteps: number, id: string) => {
 
     try {
         await db.runAsync(`UPDATE days SET totalSteps = ? WHERE id = ?`, [totalSteps, id]);
@@ -112,11 +112,22 @@ export const updateDayTotalSteps = async (id: number, totalSteps: string) => {
     }
 }
 
-export const updateDayTotalCals = async (id: number, totalCals: string) => {
+export const updateDayTotalCals = async (totalCals: number, id: string) => {
 
     try {
         await db.runAsync(`UPDATE days SET totalCals = ? WHERE id = ?`, [totalCals, id]);
     } catch (e) {
         console.log("updateDay Error: ", e);
+    }
+    
+}
+
+export const deleteFullDB = async () => {
+
+    try {
+        await db.runAsync(`DELETE FROM days`  );
+        console.log("DB Cleared");
+    } catch (e) {
+        console.log("deleteDaysFromDb Error: ", e)
     }
 }
