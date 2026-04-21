@@ -10,23 +10,17 @@ import { Text, View } from 'react-native';
 // Convert entryData string into an array of Entry objects
 
 
-function parseDataString(fullData: string) { // will take in a entryData string from each Day
-    const dataStrings = fullData.split('~'); // data should look like: ["...|...|...|...", "...|...|...|...", "...|...|...|..."]
-    const entryArray: Entry [] = [];
+export function parseDataString(fullData: string): Entry[] {
+  return fullData.split('~').map((value) => {
+    const splitString = value.split("|");
 
-    dataStrings.forEach((value, index, array) => {
-        const splitString = value.split("|");
-        const newEntry: Entry = {
-            type: splitString[0],
-            time: splitString[1],
-            value: splitString[2],
-            description: splitString[3]
-        }
-
-        entryArray.push(newEntry);
-
-        return entryArray;
-});
+    return {
+      type: splitString[0],
+      time: splitString[1],
+      value: splitString[2],
+      description: splitString[3]
+    };
+  });
 }
 
 export function createDataString(entry: Entry) {
@@ -35,7 +29,7 @@ export function createDataString(entry: Entry) {
   const value = entry.value.toString();
   const description = entry.description;
 
-  return type + "|" + time + "|" + value + "|" + description;
+  return type + "|" + time + "|" + value + "|" + description + "~";
 }
 
 export function getTodayDate() {
@@ -67,7 +61,7 @@ const RenderDays = ({ day }: { day: Day }) => {
         <View>
           <Text>Date: {day.date}</Text>
           <Text>Total Steps: {day.totalSteps}</Text>
-          <Text>Total Calories: {day.totalCals}</Text>
+          <Text>Total Calories: {Number(day.totalCals)}</Text>
         </View>
       )}
       
