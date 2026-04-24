@@ -12,7 +12,10 @@ export default function SettingsScreen() {
     // Load settings on mount
     useEffect(() => {
         const loadSettings = async () => {
-            const data = await getSettings();
+            const data = await getSettings() as {
+                stepsGoal: number,
+                caloriesGoal: number
+            };
 
             if (data) {
                 setStepsGoal(String(data.stepsGoal));
