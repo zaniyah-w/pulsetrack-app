@@ -1,5 +1,5 @@
 import RenderDays, { getTodayDate, parseDataString } from "@/components/RenderDays";
-import { addDayToDb, deleteFullDB, getTodayFromDb } from "@/database/db";
+import { addDayToDb, getTodayFromDb } from "@/database/db";
 import { Day } from "@/interfaces/interface";
 import { useFocusEffect, useRouter } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
@@ -47,7 +47,6 @@ useEffect(() => { // When informaton comes, check for any errors
   setIsLoading(false);
 }, [days]);
 
-  // params: {todayID: days[0].date}
   return (
     <View style = {{flex: 1, justifyContent: "center", alignItems: "center"}}>
 
@@ -67,7 +66,7 @@ useEffect(() => { // When informaton comes, check for any errors
       ) : (
         <View style={{flex: 1, justifyContent: "center", alignItems: "center"}}>
         <TouchableOpacity style={styles.card}
-        onPress={() => router.push('./newWorkoutEntry')}>
+        onPress={() => router.push({pathname:'./newWorkoutEntry', params: {todayID: days[0].date}})}>
             <Text style={styles.label}>New Workout Entry</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.card}
@@ -75,8 +74,8 @@ useEffect(() => { // When informaton comes, check for any errors
             <Text style={styles.label}>New Meal Entry</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.card}
-        onPress={() => deleteFullDB()}>
-          <Text style={styles.label}>Clear DB</Text>
+        onPress={() => router.push({pathname:'./fullLog'})}>
+            <Text style={styles.label}>Full Log</Text>
         </TouchableOpacity>
       </View>
       )}

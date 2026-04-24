@@ -13,3 +13,4 @@ export interface Entry {
     value: string; // this will represent steps taken for workouts, or calories consumed for meals
     description: string; // create textbox for user to log what they did
 }
+

@@ -1,124 +1,171 @@
-import { initDatabase } from "@/database/db";
-import { Link, useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import { getTodayDate } from "@/components/RenderDays";
+import { getSettings, getTodayFromDb, initDatabase, initializeSettings } from "@/database/db";
+import { Link, useFocusEffect, useRouter } from "expo-router";
+import React, { useCallback, useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import * as Progress from "react-native-progress";
 
-function getnumOfStepsForday(){
-    const minSteps = 100;
-    const maxSteps = 18000
-    return Math.floor(Math.random() *(maxSteps - minSteps + 1)) + minSteps;
-}
-
-function getCaloriesForDay() {
-  const minCalories = 50;
-  const maxCalories = 3000;
-  return Math.floor(Math.random() * (maxCalories - minCalories + 1)) + minCalories;
-}
 
 export default function Index() {
 
 
     const router = useRouter();
 
-    const numOfSteps = getnumOfStepsForday();
-    const cals = getCaloriesForDay();
-    const goal = 18000;  
-    const maxCals = 3000;
+    const formattedDate = getTodayDate();
 
-    const[activateCard, setActivateCard] = useState<"numOfSteps"|"calories"|null>(null);
+    const [steps, setSteps] = useState(0);
+    const [stepsGoal, setStepsGoal] = useState(0);
+    const [calories, setCalories] = useState(0);
+    const [caloriesGoal, setCaloriesGoal] = useState(0);
 
-    const handlePress = (type: "numOfSteps" | "calories") => {setActivateCard(type);
+    const [stepsProgress, setStepsProgress] = useState(0);
+    const [caloriesProgress, setCaloriesProgress] = useState(0);
+    const [loading, setIsLoading] = useState<Boolean | null>(true);
+    const [activateCard, setActivateCard] = useState<"numOfSteps" | "calories" | null>(null);
+    const handlePress = (type: "numOfSteps" | "calories") => {
+        setActivateCard(type);
     };
-    
-    const [progress_display, setProgress] = useState(0);
-
-    const [cals_display, setCals_display] = useState(0);
-
-    useEffect(() => { // Inital setup on first load
-
-        initDatabase(); // Run database for the first time, creating it if it doesnt exist
-        
 
 
-        const steptimeOut = setTimeout(() => {
-            setProgress(numOfSteps/goal);
-        }, 300);
+    useFocusEffect(
+        useCallback(() => {
+            initDatabase(); // Run database for the first time, creating it if it doesnt exist
+            initializeSettings(18000, 3000);
 
+            const loadData = async () => {
+                setIsLoading(true); // reset when screen refocuses
+                // get today's data
+                const today = await getTodayFromDb(formattedDate);
+
+                if (today[0]) {
+                    setSteps(Number(today[0].totalSteps));
+                    setCalories(Number(today[0].totalCals));
+                }
+
+                // get settings
+                const settings = await getSettings() as {
+                    stepsGoal: number;
+                    caloriesGoal: number;
+                } | null;
+
+                if (settings) {
+                    setStepsGoal(settings.stepsGoal);
+                    setCaloriesGoal(settings.caloriesGoal);
+                    console.log("Settings", {
+                    stepsGoal,
+                    caloriesGoal,
+                });
+                }
+
+
+                setIsLoading(false);
+            };
+
+            loadData();
+        }, [formattedDate])
+    );
+
+    useEffect(() => {
+
+        if (loading) return;
+        if (!stepsGoal || !caloriesGoal) return;
+
+        console.log("ANIMATION TRIGGERED", {
+            loading,
+            steps,
+            stepsGoal,
+            calories,
+            caloriesGoal,
+        });
+
+
+        // --- STEPS ---
+        const stepTimeout = setTimeout(() => {
+            const stepRatio = Math.min(steps / stepsGoal, 1);
+            setStepsProgress(stepRatio);
+        }, 200);
+
+        // --- CALORIES ---
         let start = 0;
-        const duration = 1000;
-        const increment = cals / (duration / 16);
+        const duration = 800;
+        const frameRate = 16;
+        const totalFrames = duration / frameRate;
+
+        const target = Math.min(calories / caloriesGoal, 1);
+        const increment = target / totalFrames;
 
         const interval = setInterval(() => {
-            start = start + increment;
-            if (start >= cals){
-                setCals_display(cals/maxCals);
-                clearInterval(interval);
-            }else{
-                setCals_display(Math.floor(start));
-            }
+            start += increment;
 
-        },16);
+            if (start >= target) {
+                setCaloriesProgress(target);
+                clearInterval(interval);
+            } else {
+                setCaloriesProgress(start);
+            }
+        }, frameRate);
+
 
         return () => {
-            clearTimeout(steptimeOut);
+            clearTimeout(stepTimeout);
             clearInterval(interval);
         };
 
-    },[]);
+    }, [loading, steps, stepsGoal, calories, caloriesGoal]);
 
-  return (
-    <View style= {styles.container}>
-        <Link href={"./steps"} asChild>
-        <TouchableOpacity style={styles.card}
-        onPress={() => handlePress("numOfSteps")}>
-            
-        
-        <Progress.Circle
-        size = {200}
-        progress={progress_display}
-        thickness={10}
-        color="#270787"
-        showsText = {true}
-        formatText={() => `${numOfSteps}/${goal}`}
-        animated = {true} 
-        direction="clockwise"
-        borderWidth={3}
-        unfilledColor="#eeeeee37"
-        
-        textStyle={{ fontSize: 24, fontWeight: '600', }}/>
 
-        <Text style = {styles.label}>Steps For the Day </Text>
-    </TouchableOpacity>
-    </Link>
+    return (
+        <View style={styles.container}>
+            <Link href={"./steps"} asChild>
+                <TouchableOpacity style={styles.card}
+                    onPress={() => handlePress("numOfSteps")}>
 
-    <TouchableOpacity style={styles.card} onPress={() => handlePress("calories")}>
 
-        <Progress.Circle
-        size = {200}
-        progress={cals_display}
-        thickness={10}
-        color="#09b34d"
-        showsText = {true}
-        formatText={() => `${cals}/${maxCals}`}
-        animated={true} 
-        direction="counter-clockwise" 
-        borderWidth ={3}
-        unfilledColor="#eeeeee37"
-        
-        textStyle={{ fontSize: 24, fontWeight: '600', }}/>
+                    <Progress.Circle
+                        size={200}
+                        progress={stepsProgress}
+                        thickness={10}
+                        color="#270787"
+                        showsText={true}
+                        formatText={() => `${steps}/${stepsGoal}`}
+                        animated={true}
+                        direction="clockwise"
+                        borderWidth={3}
+                        unfilledColor="#eeeeee37"
 
-        <Text style = {styles.label}>Calories Burned for the Day </Text>
-    </TouchableOpacity>
+                        textStyle={{ fontSize: 24, fontWeight: '600', }} />
 
-</View>
+                    <Text style={styles.label}>Steps For the Day </Text>
+                </TouchableOpacity>
+            </Link>
 
-  );
+            <TouchableOpacity style={styles.card} onPress={() => handlePress("calories")}>
+
+                <Progress.Circle
+                    size={200}
+                    progress={caloriesProgress}
+                    thickness={10}
+                    color="#09b34d"
+                    showsText={true}
+                    formatText={() => `${calories}/${caloriesGoal}`}
+                    animated={true}
+                    direction="counter-clockwise"
+                    borderWidth={3}
+                    unfilledColor="#eeeeee37"
+
+                    textStyle={{ fontSize: 24, fontWeight: '600', }} />
+
+                <Text style={styles.label}>Calories Burned for the Day </Text>
+            </TouchableOpacity>
+
+        </View>
+
+    );
 }
 
 
 const styles = StyleSheet.create({
-    container:{
+    container: {
         alignItems: "center",
         justifyContent: "center",
         marginTop: 100,
@@ -132,7 +179,7 @@ const styles = StyleSheet.create({
         marginBottom: 80,
     },
 
-    card:{
+    card: {
         fontSize: 18,
         color: "black",
         fontWeight: "medium",

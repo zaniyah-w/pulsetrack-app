@@ -32,6 +32,16 @@ export const initDatabase = async () => {
                 created_at TEXT DEFAULT CURRENT_TIMESTAMP
             );
         `);
+
+        await db.execAsync(`
+            PRAGMA journal_mode = WAL;
+            
+            CREATE TABLE IF NOT EXISTS settings (
+                id INTEGER PRIMARY KEY,
+                stepsGoal REAL,
+                caloriesGoal REAL
+            );
+        `);
   } catch (e) {
     console.log("Error: ", e);
   }
@@ -131,3 +141,41 @@ export const deleteFullDB = async () => {
         console.log("deleteDaysFromDb Error: ", e)
     }
 }
+
+export const initializeSettings = async (stepsGoal: number, caloriesGoal: number) => {
+  try {
+    await db.runAsync(
+      `INSERT OR IGNORE INTO settings (id, stepsGoal, caloriesGoal)
+       VALUES (1, ?, ?)`,
+      [stepsGoal, caloriesGoal]
+    );
+  } catch (e) {
+    console.log("initializeSettings: ", e);
+  }
+};
+
+export const updateSettings = async (stepsGoal: number, caloriesGoal: number) => {
+  try {
+    await db.runAsync(
+      `UPDATE settings
+       SET stepsGoal = ?, caloriesGoal = ?
+       WHERE id = 1`,
+      [stepsGoal, caloriesGoal]
+    );
+  } catch (e) {
+    console.log("updateSettings: ", e);
+  }
+};
+
+export const getSettings = async () => {
+  try {
+    const result = await db.getFirstAsync(
+      `SELECT * FROM settings WHERE id = 1`
+    );
+
+    return result ?? null;
+  } catch (e) {
+    console.log("getSettings: ", e);
+    return null;
+  }
+};
