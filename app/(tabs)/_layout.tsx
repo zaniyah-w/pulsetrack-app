@@ -26,17 +26,17 @@ export default function TabLayout() {
         }}/>
 
       <Tabs.Screen
-        name="(workout_log)"
+        name="(map)"
         options={{
-          title: 'Workouts',
-          tabBarIcon: ({ color, focused }) => <Ionicons name={focused ? 'journal': 'journal-outline'} size={24} color={color} />
+          title: 'Map',
+          tabBarIcon: ({ color, focused }) => <Ionicons name={focused ? 'map': 'map-outline'} size={24} color={color} />
         }}/>
 
         <Tabs.Screen
         name="(settings)"
         options={{
           title: 'Settings',
-          tabBarIcon: ({ color, focused }) => <Ionicons name={focused ? 'person': 'person-outline'} size={24} color={color} />
+          tabBarIcon: ({ color, focused }) => <Ionicons name={focused ? 'cog': 'cog-outline'} size={24} color={color} />
         }}/>
         
     </Tabs>

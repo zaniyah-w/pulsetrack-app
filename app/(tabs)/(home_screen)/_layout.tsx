@@ -10,10 +10,6 @@ return (
 
         <Stack.Screen name = "index" options={{title: "Home", presentation: 'modal'}} /> 
 
-
-        <Stack.Screen name = "steps" options={{title: "Steps", presentation: 'modal'}} /> 
-
-        <Stack.Screen name = "calories" options={{title: "Calories"}} /> 
   
   </Stack>
   </SafeAreaProvider>

@@ -1,6 +1,6 @@
 import { getTodayDate } from "@/components/RenderDays";
 import { getSettings, getTodayFromDb, initDatabase, initializeSettings } from "@/database/db";
-import { Link, useFocusEffect, useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import * as Progress from "react-native-progress";
@@ -10,8 +10,6 @@ export default function Index() {
 
 
     const router = useRouter();
-
-    const formattedDate = getTodayDate();
 
     const [steps, setSteps] = useState(0);
     const [stepsGoal, setStepsGoal] = useState(0);
@@ -29,7 +27,15 @@ export default function Index() {
 
     useFocusEffect(
         useCallback(() => {
+            const formattedDate = getTodayDate();
+
+
             initDatabase(); // Run database for the first time, creating it if it doesnt exist
+
+            setTimeout(() => {
+                console.log("Executed after 3 seconds");
+            }, 3000);
+
             initializeSettings(18000, 3000);
 
             const loadData = async () => {
@@ -40,6 +46,9 @@ export default function Index() {
                 if (today[0]) {
                     setSteps(Number(today[0].totalSteps));
                     setCalories(Number(today[0].totalCals));
+
+                    console.log("RAW OBJECT:", today[0]);
+                    console.log("STEPS VALUE:", today[0]?.totalSteps);
                 }
 
                 // get settings
@@ -52,17 +61,23 @@ export default function Index() {
                     setStepsGoal(settings.stepsGoal);
                     setCaloriesGoal(settings.caloriesGoal);
                     console.log("Settings", {
-                    stepsGoal,
-                    caloriesGoal,
-                });
+                        stepsGoal,
+                        caloriesGoal,
+                    });
                 }
 
 
                 setIsLoading(false);
+                console.log("HOME FETCH:", today[0]?.totalSteps);
             };
 
             loadData();
-        }, [formattedDate])
+
+            console.log("RENDER VALUES:", {
+                stepsProgress,
+                caloriesProgress
+            });
+        }, [])
     );
 
     useEffect(() => {
@@ -116,7 +131,7 @@ export default function Index() {
 
     return (
         <View style={styles.container}>
-            <Link href={"./steps"} asChild>
+
                 <TouchableOpacity style={styles.card}
                     onPress={() => handlePress("numOfSteps")}>
 
@@ -137,7 +152,6 @@ export default function Index() {
 
                     <Text style={styles.label}>Steps For the Day </Text>
                 </TouchableOpacity>
-            </Link>
 
             <TouchableOpacity style={styles.card} onPress={() => handlePress("calories")}>
 
@@ -155,7 +169,7 @@ export default function Index() {
 
                     textStyle={{ fontSize: 24, fontWeight: '600', }} />
 
-                <Text style={styles.label}>Calories Burned for the Day </Text>
+                <Text style={styles.label}>Calories for the Day </Text>
             </TouchableOpacity>
 
         </View>

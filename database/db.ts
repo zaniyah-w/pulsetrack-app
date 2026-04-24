@@ -83,7 +83,8 @@ export const getTodayFromDb = async (date: string): Promise<Day []> => {
         // get results from db
         const result: Day [] = await db.getAllAsync<Day>(
             `SELECT * FROM days WHERE date = ?`, [date]);
-        return result
+            console.log("DB QUERY RESULT:", result);
+        return result;
     } catch (e) {
         console.log("getTodayFromDb: ", e)
         const result: Day [] = []
