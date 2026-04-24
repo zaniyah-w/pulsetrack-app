@@ -65,15 +65,13 @@ export default function DayDetails() {
           setEntries([]);
         }
 
-        setIsLoading(false);
-
         console.log(entries)
       };
 
       load();
 
       return () => {
-        isActive = false; // cleanup when screen loses focus
+        isActive = false; 
       };
     }, [date])
   );
