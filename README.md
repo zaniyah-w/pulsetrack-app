@@ -21,6 +21,6 @@ app/(tabs)/(home_screen)/index.tsx
 2. shows butttons on the bottom of the screen to go to other factions of the app(profile, map, settings, home)
 
 app/(tabs)/(workout_log)/index.tsx
-1.Shows list of already added workouts and allows user to add more
+1. Shows list of already added workouts and allows user to add more
 2. shows add button where you can click, it shows a map, and you can plot points for your next workout
-2.adds the route to flatlist along with the miles and the amount of steps it would take along with calories
+3. adds the route to flatlist along with the miles and the amount of steps it would take along with calories
